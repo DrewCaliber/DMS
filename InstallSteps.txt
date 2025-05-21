@@ -55,3 +55,5 @@ http://IPADDR:5055
 Edit the .env in /opt/dms/
 
 Add the API keys. Reboot the server. Reboot command is just reboot.
+
+12. Setup Homarr at your leisure.
