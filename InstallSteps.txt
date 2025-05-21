@@ -21,7 +21,7 @@ https://yams.media/config/qbittorrent/#setting-up-qbittorrent
 Ignore the "Final VPN Check" YAMS commands do not apply here, just the app setup pictures.
 
 You'll also want to add the docker containers to the "Bypass authentication for clients in whitelisted IP subnets" under WebUI.
-Usually they're under the "172.18.0.0/24" network. Check Portainer > Containers to be sure. Sometimes they'll fall under "192.168.1.0/24".
+Usually they're under the "172.18.0.0/24" network. Check Portainer > Containers to be sure. Sometimes they'll fall under "192.168.1.0/24", or even 172.16.0.0/24. Pay close attention or Decluttarr will cry trying to use qBittorrent.
 
 5. Setup Radar (Store the API key in a notepad, you'll need it later).
 https://yams.media/config/radarr/
