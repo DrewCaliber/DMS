@@ -83,3 +83,4 @@ Enjoy your new media server!
 
 To check VPN Function, copy and paste this into console:
 echo "Host IP: $(wget -qO- https://api.ipify.org)" && echo "qBittorrent/VPN IP: $(docker exec gluetun wget -qO- https://api.ipify.org)" && echo "VPN Working: $([ "$(wget -qO- https://api.ipify.org)" != "$(docker exec gluetun wget -qO- https://api.ipify.org)" ] && echo "YES - IPs are different ✅" || echo "NO - Same IP address ❌")"
+
