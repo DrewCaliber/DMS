@@ -31,6 +31,8 @@ We also don't use SABnzbd. Paying for things isn't the true way. ;)
 6. Setup Sonarr (Store the API key in a notepad, you'll need it later).
 https://yams.media/config/sonarr/
 
+Once again SABnzbd bad. Defeats the purpose imo.
+
 7. Setup Prowlarr
 https://yams.media/config/prowlarr/
 
