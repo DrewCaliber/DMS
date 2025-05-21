@@ -576,11 +576,9 @@ if [ "$USE_FILE_SERVER" = "y" ] || [ "$USE_FILE_SERVER" = "Y" ]; then
     echo ">>> Checking file server mount status:"
     if mountpoint -q /opt/dms/media; then
         echo "File server mounted: YES ✓"
-        echo "Mount point: //$(grep "//$FILE_SERVER_IP/$MEDIA_FOLDER" /etc/fstab | head -1)"
     else
         echo "File server mounted: NO ✗"
         echo "Please check your file server settings and try mounting manually:"
-        echo "mount -t cifs //$FILE_SERVER_IP/$MEDIA_FOLDER /opt/dms/media -o username=$SMB_USER,password=YOUR_PASSWORD,vers=3.0"
     fi
 fi
 
