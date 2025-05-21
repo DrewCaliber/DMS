@@ -34,6 +34,9 @@ https://yams.media/config/sonarr/
 Once again SABnzbd bad. Defeats the purpose imo.
 
 7. Setup Prowlarr
+Before you follow the guide, go to Settings > Indexer > Add > Add FlareSolver. Tags: flaresolverr Host: http://flaresolverr:8191/ > Test > Save
+
+If you get a "CloudFlare blah blah" when testing an Indexer, then add the flaresolverr tag.
 https://yams.media/config/prowlarr/
 
 8. Setup Bazarr
