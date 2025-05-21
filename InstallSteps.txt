@@ -39,6 +39,8 @@ Before you follow the guide, go to Settings > Indexer > Add > Add FlareSolver. T
 If you get a "CloudFlare blah blah" when testing an Indexer, then add the flaresolverr tag.
 https://yams.media/config/prowlarr/
 
+For my Indexers, I usually filter Language to en-AU, en-GB, en-US - Privacy to Public, and Categories to Movies, TV. Then run down the list and add any that work.
+
 8. Setup Bazarr
 https://yams.media/config/bazarr/
 
