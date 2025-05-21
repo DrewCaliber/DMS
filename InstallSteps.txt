@@ -57,3 +57,26 @@ Edit the .env in /opt/dms/
 Add the API keys. Reboot the server. Reboot command is just reboot.
 
 12. Setup Homarr at your leisure.
+
+Total Stack:
+
+======================================
+      DMS Setup Complete!
+======================================
+
+Access your media server services:
+
+Jellyfin:     http://IPADDR:8096
+Sonarr:       http://IPADDR:8989
+Radarr:       http://IPADDR:7878
+Lidarr:       http://IPADDR:8686
+Readarr:      http://IPADDR:8787
+Bazarr:       http://IPADDR:6767
+Prowlarr:     http://IPADDR:9696
+qBittorrent:  http://IPADDR:8081
+Portainer:    http://IPADDR:9000
+Jellyseerr:   http://IPADDR:5055
+Homarr:       http://IPADDR:7575
+
+Enjoy your new media server!
+====================================
