@@ -407,42 +407,67 @@ services:
   decluttarr:
     image: ghcr.io/manimatter/decluttarr:latest
     container_name: decluttarr
+    restart: always
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
       ## General
-      - LOG_LEVEL=INFO
+      # TEST_RUN: True
+      # SSL_VERIFICATION: False
+      LOG_LEVEL: INFO
+
       ## Features
-      - REMOVE_TIMER=120
-      - REMOVE_FAILED=True
-      - REMOVE_FAILED_IMPORTS=True
-      - REMOVE_METADATA_MISSING=True
-      - REMOVE_MISSING_FILES=True
-      - REMOVE_ORPHANS=True
-      - REMOVE_SLOW=True
-      - REMOVE_STALLED=True
-      - REMOVE_UNMONITORED=False
-      - 'RUN_PERIODIC_RESCANS={"SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}, "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}}'
+      REMOVE_TIMER: 120
+      REMOVE_FAILED: True
+      REMOVE_FAILED_IMPORTS: True
+      REMOVE_METADATA_MISSING: True
+      REMOVE_MISSING_FILES: True
+      REMOVE_ORPHANS: True
+      REMOVE_SLOW: False
+      REMOVE_STALLED: True
+      REMOVE_UNMONITORED: True
+      RUN_PERIODIC_RESCANS: '
+        {
+        "SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7},
+        "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}
+        }'
+
       # Feature Settings
-      - PERMITTED_ATTEMPTS=3
-      - NO_STALLED_REMOVAL_QBIT_TAG=Don't Kill
-      - MIN_DOWNLOAD_SPEED=100
-      - 'FAILED_IMPORT_MESSAGE_PATTERNS=["Not a Custom Format upgrade for existing", "Not an upgrade for existing"]'
-      ## Service URLs and API Keys
-      - RADARR_URL=http://radarr:7878
-      - RADARR_KEY=${RADARR_API_KEY}
-      - SONARR_URL=http://sonarr:8989
-      - SONARR_KEY=${SONARR_API_KEY}
-      - LIDARR_URL=http://lidarr:8686
-      - LIDARR_KEY=${LIDARR_API_KEY}
-      - READARR_URL=http://readarr:8787
-      - READARR_KEY=${READARR_API_KEY}
-      - QBITTORRENT_URL=http://gluetun:8081
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${INSTALL_DIRECTORY}/config/decluttarr:/config
-    restart: unless-stopped
+      PERMITTED_ATTEMPTS: 3
+      NO_STALLED_REMOVAL_QBIT_TAG: Don't Kill
+      MIN_DOWNLOAD_SPEED: 100
+      FAILED_IMPORT_MESSAGE_PATTERNS: '
+        [
+        "Not a Custom Format upgrade for existing",
+        "Not an upgrade for existing"
+        ]'
+
+      ## Radarr
+      RADARR_URL: http://radarr:7878
+      RADARR_KEY: $RADARR_API_KEY
+
+      ## Sonarr
+      SONARR_URL: http://sonarr:8989
+      SONARR_KEY: $SONARR_API_KEY
+
+      ## Lidarr
+      LIDARR_URL: http://lidarr:8686
+      LIDARR_KEY: $LIDARR_API_KEY
+
+      ## Readarr
+      READARR_URL: http://readarr:8787
+      READARR_KEY: $READARR_API_KEY
+
+      ## qBitorrent
+      QBITTORRENT_URL: http://gluetun:8081
+    depends_on:
+      - radarr
+      - sonarr
+      - lidarr
+      - readarr
+      - gluetun
 
   # FlareSolverr to get passed basic CloudFlare blocks for Indexers
   flaresolverr:
@@ -576,9 +601,11 @@ if [ "$USE_FILE_SERVER" = "y" ] || [ "$USE_FILE_SERVER" = "Y" ]; then
     echo ">>> Checking file server mount status:"
     if mountpoint -q /opt/dms/media; then
         echo "File server mounted: YES ✓"
+        echo "Mount point: //$(grep "//$FILE_SERVER_IP/$MEDIA_FOLDER" /etc/fstab | head -1)"
     else
         echo "File server mounted: NO ✗"
         echo "Please check your file server settings and try mounting manually:"
+        echo "mount -t cifs //$FILE_SERVER_IP/$MEDIA_FOLDER /opt/dms/media -o username=$SMB_USER,password=YOUR_PASSWORD,vers=3.0"
     fi
 fi
 
