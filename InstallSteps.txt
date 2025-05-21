@@ -47,7 +47,10 @@ https://yams.media/config/bazarr/
 9. Setup Jellyfin
 https://yams.media/config/jellyfin/
 
-10. Once you're done, grab all the API keys for Radar, Sonarr, Lidarr (Optional), and Readarr (Optional).
+10. Setup Jellyseerr - No guide here, good luck, it's not hard.
+http://IPADDR:5055
+
+11. Once you're done, grab all the API keys for Radar, Sonarr, Lidarr (Optional), and Readarr (Optional).
 
 Edit the .env in /opt/dms/
 
