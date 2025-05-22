@@ -114,7 +114,7 @@ echo ""
 echo "===================================="
 echo ""
 # Prompt for timezone
-echo "Enter your timezone (e.g., America/New_York):"
+echo "Enter your timezone (e.g., America/Chicago):"
 read -r USER_TIMEZONE
 
 echo ""
@@ -165,15 +165,59 @@ if [ "$USE_FILE_SERVER" = "y" ] || [ "$USE_FILE_SERVER" = "Y" ]; then
         # Don't set MOUNT_SUCCESS to true
     fi
 
-    # Add mount to fstab for persistence upon reboot
+    # Set up persistent mount with improved reliability
+    echo ">>> Setting up persistent mount with credentials file..."
+    sleep 2
+
+    # Create credentials file for security
+    mkdir -p /etc/cifs
+    cat > /etc/cifs/dms-credentials << EOF
+username=$SMB_USER
+password=$SMB_USER_PASSWORD
+domain=
+EOF
+
+    # Secure the credentials file
+    chmod 600 /etc/cifs/dms-credentials
+    chown root:root /etc/cifs/dms-credentials
+
+    # Add CIFS module to boot
+    echo "cifs" >> /etc/modules
+
+    # Enable networking service to start before mount
+    rc-update add networking boot
+
     # Remove existing line if present
     sed -i "\|//$FILE_SERVER_IP/$MEDIA_FOLDER|d" /etc/fstab
     
-    # Add new fstab entry with proper octal notation
+    # Add new fstab entry with credentials file and better options
     cat >> /etc/fstab << EOF
-//$FILE_SERVER_IP/$MEDIA_FOLDER /opt/dms/media cifs username=$SMB_USER,password=$SMB_USER_PASSWORD,vers=3.0,uid=1000,gid=1000,file_mode=0755,dir_mode=0755,_netdev 0 0
+//$FILE_SERVER_IP/$MEDIA_FOLDER /opt/dms/media cifs credentials=/etc/cifs/dms-credentials,vers=3.0,uid=1000,gid=1000,file_mode=0755,dir_mode=0755,_netdev,noauto,x-systemd.automount,x-systemd.device-timeout=30 0 0
 EOF
-    sleep 2
+
+    # Create a mount script for reliability
+    cat > /etc/local.d/mount-dms.start << 'MOUNT_SCRIPT'
+#!/bin/sh
+# Wait for network
+sleep 10
+
+# Check if already mounted
+if ! mountpoint -q /opt/dms/media; then
+    # Try to mount
+    mount /opt/dms/media
+    if [ $? -eq 0 ]; then
+        logger "DMS: Successfully mounted media directory"
+        # Set permissions
+        chown -R arruser:arruser /opt/dms/media
+        chmod -R 775 /opt/dms/media
+    else
+        logger "DMS: Failed to mount media directory"
+    fi
+fi
+MOUNT_SCRIPT
+
+    chmod +x /etc/local.d/mount-dms.start
+    rc-update add local default
 else
     echo ">>> Creating local media directories..."
     sleep 2
@@ -595,19 +639,6 @@ echo "======================================"
 echo ">>> qBittorrent temporary password:"
 docker logs qbittorrent 2>&1 | grep "temporary password" | tail -n 1
 echo "======================================"
-
-# Check file server mount status
-if [ "$USE_FILE_SERVER" = "y" ] || [ "$USE_FILE_SERVER" = "Y" ]; then
-    echo ">>> Checking file server mount status:"
-    if mountpoint -q /opt/dms/media; then
-        echo "File server mounted: YES ✓"
-        echo "Mount point: //$(grep "//$FILE_SERVER_IP/$MEDIA_FOLDER" /etc/fstab | head -1)"
-    else
-        echo "File server mounted: NO ✗"
-        echo "Please check your file server settings and try mounting manually:"
-        echo "mount -t cifs //$FILE_SERVER_IP/$MEDIA_FOLDER /opt/dms/media -o username=$SMB_USER,password=YOUR_PASSWORD,vers=3.0"
-    fi
-fi
 
 # Get server IP for URL display - more reliable IP detection
 SERVER_IP=$(ip -4 addr show | grep -v 127.0.0.1 | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -n 1)
