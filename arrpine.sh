@@ -633,12 +633,11 @@ if [ "$HOST_IP" != "$VPN_IP" ]; then
 else
   echo "VPN Working: NO - Same IP address ✗"
 fi
-sleep 2
+sleep 3
 echo "======================================"
 # Get qBittorrent temp password - fixed to work with BusyBox grep
 echo ">>> qBittorrent temporary password:"
 docker logs qbittorrent 2>&1 | grep "temporary password" | tail -n 1
-echo "======================================"
 
 # Get server IP for URL display - more reliable IP detection
 SERVER_IP=$(ip -4 addr show | grep -v 127.0.0.1 | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -n 1)
@@ -651,9 +650,9 @@ fi
 if [ -z "$SERVER_IP" ]; then
     SERVER_IP="localhost"
 fi
-
+sleep 3
 echo "======================================"
-echo "      DMS Setup Complete!      "
+echo "        DMS Setup Complete!           "
 echo "======================================"
 echo ""
 echo "Access your media server services:"
