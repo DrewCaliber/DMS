@@ -286,6 +286,10 @@ services:
     restart: unless-stopped
     network_mode: "service:gluetun"
     depends_on:
+      - radarr
+      - sonarr
+      - lidarr
+      - readarr
       - gluetun
 
   # Sonarr is used to query, add downloads to the download queue and index TV shows
