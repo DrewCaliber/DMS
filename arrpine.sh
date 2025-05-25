@@ -564,6 +564,7 @@ services:
       - lidarr
       - readarr
       - qbittorrent
+    restart: unless-stopped
 
   # Watchtower is going to keep our instances updated
   watchtower:
