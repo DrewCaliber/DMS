@@ -270,6 +270,12 @@ services:
     ports:
       - 8096:8096
     restart: unless-stopped
+    depends_on:
+      - radarr
+      - sonarr
+      - lidarr
+      - readarr
+      - qbittorrent
 
   # qBitorrent is used to download torrents
   qbittorrent:
@@ -286,10 +292,6 @@ services:
     restart: unless-stopped
     network_mode: "service:gluetun"
     depends_on:
-      - radarr
-      - sonarr
-      - lidarr
-      - readarr
       - gluetun
 
   # Sonarr is used to query, add downloads to the download queue and index TV shows
@@ -307,6 +309,8 @@ services:
     ports:
       - 8989:8989
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Radarr is used to query, add downloads to the download queue and index Movies
   # https://radarr.video/
@@ -323,6 +327,8 @@ services:
     ports:
       - 7878:7878
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Lidarr is used to query, add downloads to the download queue and index Music
   # https://lidarr.audio/
@@ -339,6 +345,8 @@ services:
     ports:
       - 8686:8686
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Readarr is used to query, add downloads to the download queue and index Audio and Ebooks
   # https://readarr.com/
@@ -355,6 +363,8 @@ services:
     ports:
       - 8787:8787
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Bazarr is used to download and categorize subtitles
   # https://www.bazarr.media/
@@ -371,6 +381,8 @@ services:
     ports:
       - 6767:6767
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Prowlarr is our torrent indexer/searcher. Sonarr/Radarr use Prowlarr as a source
   # https://prowlarr.com/
@@ -386,6 +398,8 @@ services:
     ports:
       - 9696:9696
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
 
   # Gluetun is our VPN, so you can download torrents safely
   gluetun:
@@ -436,6 +450,12 @@ services:
     ports:
       - 5055:5055
     restart: unless-stopped
+    depends_on:
+      - radarr
+      - sonarr
+      - lidarr
+      - readarr
+      - qbittorrent
 
   # Homarr to allow a simple homepage setup
   homarr:
@@ -515,7 +535,7 @@ services:
       - sonarr
       - lidarr
       - readarr
-      - gluetun
+      - qbittorrent
 
   # FlareSolverr to get passed basic CloudFlare blocks for Indexers
   flaresolverr:
@@ -529,6 +549,21 @@ services:
     ports:
       - "${PORT:-8191}:8191"
     restart: unless-stopped
+
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: $PUID:$PGID
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/recyclarr:/config
+    environment:
+      - TZ=${TZ}
+    depends_on:
+      - radarr
+      - sonarr
+      - lidarr
+      - readarr
+      - qbittorrent
 
   # Watchtower is going to keep our instances updated
   watchtower:
