@@ -65,6 +65,12 @@ sed -i 's/after firewall/after firewall local/' /etc/init.d/docker
 
 To prevent Docker from running before your mount can... mount.
 
+Loosely follow this video for Recyclarr if you care to. If you get a permission denied making the config, probably need to:
+chown -R arruser:arruser /opt/dms
+chmod -R 775 /opt/dms
+
+https://www.youtube.com/watch?v=sIvBG9SbIQo&t=146s
+
 12. Setup Homarr at your leisure.
 
 Total Stack:
