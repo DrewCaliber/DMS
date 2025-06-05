@@ -289,7 +289,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ${INSTALL_DIRECTORY}/config/qbittorrent:/config
-    restart: unless-stopped
+    restart: always
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
