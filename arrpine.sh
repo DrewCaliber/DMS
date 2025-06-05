@@ -711,3 +711,5 @@ echo "Homarr:       http://$SERVER_IP:7575"
 echo ""
 echo "Enjoy your new media server!"
 echo "===================================="
+chown -R arruser:arruser /opt/dms
+chmod -R 775 /opt/dms
