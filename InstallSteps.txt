@@ -56,6 +56,15 @@ Edit the .env in /opt/dms/
 
 Add the API keys. Reboot the server. Reboot command is just reboot.
 
+Then force recreate the decluttarr instance, so it grabs the new .env
+docker-compose up -d --force-recreate decluttarr
+
+You also may need to run:
+
+sed -i 's/after firewall/after firewall local/' /etc/init.d/docker
+
+To prevent Docker from running before your mount can... mount.
+
 12. Setup Homarr at your leisure.
 
 Total Stack:
